@@ -1,0 +1,90 @@
+<ion-header class="app-header" [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <span class="brand-mark"><ion-icon name="navigate-outline"></ion-icon></span>
+      GeoPunto
+    </ion-title>
+    <span slot="end" class="header-tag">GPS · ANDROID</span>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="location-content">
+  <main class="page-shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="eyebrow-dot"></span> EXPLORADOR DE UBICACIÓN</div>
+      <h1 id="page-title">Tu ubicación,<br /><span>en un instante.</span></h1>
+      <p class="intro-copy">
+        Consulta las coordenadas que obtiene el sensor de ubicación de tu teléfono.
+      </p>
+    </section>
+
+    <section class="location-panel" aria-label="Consulta de ubicación">
+      <div class="location-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="art-center"><ion-icon name="navigate"></ion-icon></div>
+        <span class="art-coordinate coordinate-one">LAT</span>
+        <span class="art-coordinate coordinate-two">LNG</span>
+        <span class="art-cross cross-one">+</span>
+        <span class="art-cross cross-two">+</span>
+      </div>
+
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">POSICIÓN ACTUAL</p>
+          <h2>¿Dónde estás?</h2>
+        </div>
+        <span class="live-indicator" [class.live-indicator-active]="state === 'success'">
+          <span></span>{{ state === 'success' ? 'ACTUALIZADA' : 'LISTO' }}
+        </span>
+      </div>
+
+      <p class="status-message" [attr.data-state]="state" role="status" aria-live="polite">
+        <ion-spinner *ngIf="state === 'loading'" name="crescent" aria-hidden="true"></ion-spinner>
+        <ion-icon *ngIf="state === 'success'" name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+        <ion-icon *ngIf="state === 'error'" name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        <span>{{ message }}</span>
+      </p>
+
+      <div class="coordinates" *ngIf="position as currentPosition">
+        <div class="coordinate-row">
+          <div class="coordinate-label"><span class="coordinate-symbol latitude-symbol">N</span> Latitud</div>
+          <strong>{{ currentPosition.coords.latitude | number:'1.6-6' }}°</strong>
+        </div>
+        <div class="coordinate-row">
+          <div class="coordinate-label"><span class="coordinate-symbol longitude-symbol">E</span> Longitud</div>
+          <strong>{{ currentPosition.coords.longitude | number:'1.6-6' }}°</strong>
+        </div>
+        <div class="metadata-row">
+          <div class="metadata-item">
+            <ion-icon name="radio-outline" aria-hidden="true"></ion-icon>
+            <span>Precisión</span>
+            <strong>±{{ currentPosition.coords.accuracy | number:'1.0-0' }} m</strong>
+          </div>
+          <div class="metadata-item">
+            <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+            <span>Lectura</span>
+            <strong>{{ readAt | date:'HH:mm:ss' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <ion-button class="locate-button" expand="block" (click)="getLocation()" [disabled]="state === 'loading'">
+        <ion-spinner *ngIf="state === 'loading'" name="crescent" slot="start"></ion-spinner>
+        <ion-icon *ngIf="state !== 'loading'" name="locate-outline" slot="start"></ion-icon>
+        {{ state === 'success' ? 'Actualizar ubicación' : 'Obtener ubicación' }}
+      </ion-button>
+
+      <div class="privacy-note">
+        <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
+        <span>Tu ubicación se consulta solo cuando pulsas el botón.</span>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span class="footer-line"></span>
+      <span>GEOLOCALIZACIÓN NATIVA · CAPACITOR</span>
+      <span class="footer-line"></span>
+    </footer>
+  </main>
+</ion-content>
