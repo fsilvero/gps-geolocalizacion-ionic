@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation, Position } from '@capacitor/geolocation';
 
@@ -15,15 +15,19 @@ export class HomePage {
   message = 'Pulsa el botón para consultar la ubicación de este dispositivo.';
   position: Position | null = null;
 
+  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
+
   async getLocation(): Promise<void> {
     this.state = 'loading';
     this.message = 'Buscando una señal de ubicación…';
+    this.changeDetectorRef.markForCheck();
 
     try {
       const granted = await this.ensureLocationPermission();
       if (!granted) {
         this.state = 'error';
         this.message = 'Permiso denegado. Habilita el acceso a la ubicación en los ajustes de la aplicación y vuelve a intentarlo.';
+        this.changeDetectorRef.markForCheck();
         return;
       }
 
@@ -34,10 +38,12 @@ export class HomePage {
       });
       this.state = 'success';
       this.message = 'Ubicación obtenida correctamente.';
+      this.changeDetectorRef.markForCheck();
     } catch (error: unknown) {
       this.position = null;
       this.state = 'error';
       this.message = this.describeError(error);
+      this.changeDetectorRef.markForCheck();
     }
   }
 
